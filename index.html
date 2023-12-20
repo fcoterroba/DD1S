@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Efectos de sonido - D&D 1S Diciembre</title>
+        <style>
+            .playing {
+                box-shadow: 0 0 30px 0 rgba(255, 255, 255, 0.3);
+                background: rgb(240,249,255);
+                background: radial-gradient(ellipse at center, rgba(240,249,255,1) 0%,rgba(0,180,227,1) 100%);
+            }
+            html, body {
+                display: grid;
+                place-items: center center;
+                font-family: 'Permanent Marker', cursive;
+                min-height: 100vh;
+            }
+            body{
+                background-color: #616161;
+                background-image: url('logo.png');
+                background-repeat: repeat;
+                background-size: 20%;
+                background-position: 10px;
+            }
+
+            h1{
+                color: white;
+            }
+
+            div.container {
+                display: flex;
+                flex-direction: column;
+            }
+
+            img {
+                margin: 2rem auto;
+                max-height: 150px;
+            }
+
+            button {
+                cursor: pointer;
+                background: #9e9e2a;
+                border: none;
+                border-radius: 15px;
+                font-family: 'Permanent Marker', cursive;
+                font-size: 1.3rem;
+                transition: all 250ms;
+                text-transform: uppercase;
+                box-shadow: 1px 1px 0px #424,
+                            1px 2px 0px #424,
+                            1px 3px 0px #424,
+                            1px 4px 0px #424,
+                            1px 5px 0px #424,
+                            1px 6px 0px #424,
+                            1px 7px 0px #424;
+            }
+
+            button.active {
+                background: yellow;
+                box-shadow: none;
+                top: 2.5px;
+                position: relative;
+            }
+
+            button.unassigned {
+                background: #666;
+            }
+
+            section {
+                position: relative;
+                box-shadow: 0 5px 35px rgb(9, 22, 29);
+                background: rgb(9, 22, 29);
+                height: 300px;
+                width: 650px;
+                padding: 2rem 4rem 4rem 2rem;
+                display:grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1rem;
+                border-radius: 15px;
+            }
+
+            section::after {
+                background-image: url(https://www.elgato.com/sites/default/files/2018-10/product_logo_streamdeck.png);
+                content: "";
+                display: block;
+                position: absolute;
+                left: 24%;
+                top: 7.5px;
+                margin: 0 auto;
+                height: 82px;
+                width: 393px;
+                transform: scale(0.8)
+            }
+        </style>
+    </head>
+    <body>
+        <audio id="batallaAudio" src="music/batalla.mp3" preload="auto" loop></audio>
+        <audio id="canticoBlackAudio" src="music/canticoblack.mp3" preload="auto" loop></audio>
+        <audio id="canticoWhiteAudio" src="music/canticowhite.mp3" preload="auto" loop></audio>
+        <audio id="desiertoAudio" src="music/desierto.mp3" preload="auto" loop></audio>
+        <audio id="ermitobaAudio" src="music/ermitoba.mp3" preload="auto" loop></audio>
+        <audio id="ermitobaDieAudio" src="music/ermitobadie.mp3" preload="auto" loop></audio>
+        <audio id="hearthstoneAudio" src="music/hearthstone.mp3" preload="auto" loop></audio>
+        <audio id="japanAudio" src="music/japan.mp3" preload="auto" loop></audio>
+        <audio id="jefeFinalAudio" src="music/jefefinal.mp3" preload="auto" loop></audio>
+        <audio id="kpopAudio" src="music/kpop.mp3" preload="auto" loop></audio>
+        <audio id="lagoAudio" src="music/lago.mp3" preload="auto" loop></audio>
+        <audio id="medievalMemeAudio" src="music/medievalmeme.mp3" preload="auto" loop></audio>
+        <audio id="nightAudio" src="music/nightambient.mp3" preload="auto" loop></audio>
+        <audio id="praderaAudio" src="music/pradera.mp3" preload="auto" loop></audio>
+        <audio id="sadMemeAudio" src="music/sadmeme.mp3" preload="auto" loop></audio>
+        <div class="container">
+            <h1>SoundPad para la campaña Dungeons and Dragons 1S Navidad</h1>
+            <section>
+                <button id="batalla">Q<hr>batalla</button>
+                <button id="canticoBlack">W<hr>cantico Black</button>
+                <button id="canticoWhite">E<hr>cantico White</button>
+                <button id="desierto">R<hr>desierto</button>
+                <button id="ermitoba">T<hr>ermitoba</button>
+                <button id="ermitobaDie">A<hr>ermitoba Die</button>
+                <button id="hearthstone">S<hr>hearthstone</button>
+                <button id="japan">D<hr>japan</button>
+                <button id="jefeFinal">F<hr>jefefinal</button>
+                <button id="kpop">G<hr>kpop</button>
+                <button id="lago">Z<hr>lago</button>
+                <button id="medievalMeme">X<hr>medieval Meme</button>
+                <button id="night">C<hr>night</button>
+                <button id="pradera">V<hr>pradera</button>
+                <button id="sadMeme">B<hr>sad Meme</button>
+            </section>
+        </div>
+    </body>
+    <script>
+        function stopAllAudioExcept(exceptId) {
+            var audioElements = document.querySelectorAll('audio');
+            audioElements.forEach(function (audio) {
+                if (audio.id !== exceptId) {
+                    audio.pause();
+                    audio.currentTime = 0; // Reinicia el audio al principio
+                }
+            });
+        }
+
+        function addClickListener(buttonId, audioId) {
+            var button = document.getElementById(buttonId);
+            button.addEventListener('click', function () {
+                // Elimina la clase "playing" de todos los botones antes de agregarla al nuevo
+                document.querySelectorAll('.playing').forEach(function (btn) {
+                    btn.classList.remove('playing');
+                });
+
+                stopAllAudioExcept(audioId);
+                var audio = document.getElementById(audioId);
+                audio.play();
+
+                // Añade la clase "playing" al botón clickeado
+                button.classList.add('playing');
+            });
+        }
+
+        function addButtonKeyListener(key, buttonId) {
+            document.addEventListener('keydown', function (event) {
+                if (event.key === key) {
+                    // Elimina la clase "playing" de todos los botones antes de agregarla al nuevo
+                    document.querySelectorAll('.playing').forEach(function (btn) {
+                        btn.classList.remove('playing');
+                    });
+
+                    var button = document.getElementById(buttonId);
+                    button.click();
+
+                    // Añade la clase "playing" al botón cuya tecla ha sido presionada
+                    button.classList.add('playing');
+                }
+            });
+        }
+
+        // Configurar clics para cada botón
+        addClickListener('batalla', 'batallaAudio');
+        addClickListener('canticoBlack', 'canticoBlackAudio');
+        addClickListener('canticoWhite', 'canticoWhiteAudio');
+        addClickListener('desierto', 'desiertoAudio');
+        addClickListener('ermitoba', 'ermitobaAudio');
+        addClickListener('ermitobaDie', 'ermitobaDieAudio');
+        addClickListener('hearthstone', 'hearthstoneAudio');
+        addClickListener('japan', 'japanAudio');
+        addClickListener('jefeFinal', 'jefeFinalAudio');
+        addClickListener('kpop', 'kpopAudio');
+        addClickListener('lago', 'lagoAudio');
+        addClickListener('medievalMeme', 'medievalMemeAudio');
+        addClickListener('night', 'nightAudio');
+        addClickListener('pradera', 'praderaAudio');
+        addClickListener('sadMeme', 'sadMemeAudio');
+
+        // Configurar teclas para cada botón
+        addButtonKeyListener('q', 'batalla');
+        addButtonKeyListener('w', 'canticoBlack');
+        addButtonKeyListener('e', 'canticoWhite');
+        addButtonKeyListener('r', 'desierto');
+        addButtonKeyListener('t', 'ermitoba');
+        addButtonKeyListener('a', 'ermitobaDie');
+        addButtonKeyListener('s', 'hearthstone');
+        addButtonKeyListener('d', 'japan');
+        addButtonKeyListener('f', 'jefeFinal');
+        addButtonKeyListener('g', 'kpop');
+        addButtonKeyListener('z', 'lago');
+        addButtonKeyListener('x', 'medievalMeme');
+        addButtonKeyListener('c', 'night');
+        addButtonKeyListener('v', 'pradera');
+        addButtonKeyListener('b', 'sadMeme');
+
+    </script>
+</html>
